@@ -44,7 +44,12 @@ class _HomeState extends State<Home> {
 
   Future<void> _init() async {
     if (_sender == null) {
-      UDP sender = await UDP.bind(Endpoint.loopback(port: Port(8887)));
+      UDP sender = await UDP.bind(
+        Endpoint.any(
+          port: Port(8887),
+        ),
+      );
+      sender.socket.broadcastEnabled = true;
       setState(() {
         _sender = sender;
       });
@@ -84,7 +89,11 @@ class _HomeState extends State<Home> {
   void sendBroadcast() async {
     if (_sender != null && _isTransmitter) {
       var dataLength = await _sender.send(
-          _PAYLOAD.codeUnits, Endpoint.broadcast(port: Port(8889)));
+        _PAYLOAD.codeUnits,
+        Endpoint.broadcast(
+          port: Port(8889),
+        ),
+      );
       print("$dataLength bytes sent.");
     }
   }

@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 class BatteryNotification {
   static final androidPlatformChannelSpecifics = AndroidNotificationDetails(
@@ -30,10 +31,19 @@ class BatteryNotification {
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
-  show() => flutterLocalNotificationsPlugin.show(
-        id++,
-        'ALERT',
-        'Device state has changed',
-        platformChannelSpecifics,
-      );
+  show() async {
+    flutterLocalNotificationsPlugin.show(
+      id++,
+      'ALERT',
+      'Device state has changed',
+      platformChannelSpecifics,
+    );
+    await FlutterRingtonePlayer.play(
+      android: AndroidSounds.alarm,
+      ios: IosSounds.glass,
+      asAlarm: true, // Android only - all APIs
+    );
+    await Future.delayed(Duration(seconds: 3));
+    FlutterRingtonePlayer.stop();
+  }
 }
